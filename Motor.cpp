@@ -3,18 +3,17 @@
 
 #include "include/PinChangeInt.h"
 
+// trick to have static callback -> can have 2 motors for the robot
 Motor *instances[2] = {NULL, NULL};
 
 static void countLeft(void){
     if (instances[LEFT] != NULL){
-        // Serial.println("count left");
         instances[LEFT]->count();
     }
 }
 
 static void countRight(void){
     if (instances[RIGHT] != NULL){
-        // Serial.println("count right");
         instances[RIGHT]->count();
     }
 }
@@ -30,23 +29,28 @@ Motor::Motor(int pwmPin, int dirPin, int encPin)
 
     m_pwm = 0.0;
     m_encCount = 0;
+    m_id = 0;
 }
 
+Motor::~Motor(){
+    instances[m_id] = NULL;
+}
 
 bool Motor::init(int position = LEFT)
 {
     if (position == LEFT || position == RIGHT){
+        m_id = position;
         instances[position] = this;
 
         pinMode(m_pwmPin, OUTPUT);
         pinMode(m_dirPin, OUTPUT);
         pinMode(m_encPin, INPUT);
+
+        // according to the position of the wheel we use different interrupts
         if (position == LEFT) {
-            Serial.print("attach left with"); Serial.println(m_encPin);
             attachInterrupt (digitalPinToInterrupt(m_encPin), countLeft, CHANGE);
         }
         else if (position == RIGHT){
-            Serial.print("attach right with "); Serial.println(m_encPin);
             attachPinChangeInterrupt (m_encPin, countRight, CHANGE);
         }
         return true;
@@ -58,11 +62,10 @@ bool Motor::init(int position = LEFT)
 
 void Motor::count()
 {
-    // Serial.print(id); Serial.println(" : count");
     if (m_pwm > 0){
         m_encCount ++;
     }
-    else if (m_pwm < 0) {
+    else {
         m_encCount --;
     }
 }
@@ -86,7 +89,7 @@ int Motor::setSpeed(double speed)
 }
 
 int Motor::getId(){
-    return id;
+    return m_id;
 }
 
 int Motor::getEncCount(){

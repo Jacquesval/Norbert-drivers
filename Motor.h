@@ -11,7 +11,7 @@ private:
     int m_pwmPin;
     int m_dirPin;
     int m_encPin;
-    int id;
+    int m_id;
 
 
     double m_pwm;
@@ -20,6 +20,7 @@ private:
 
 public:
     Motor(int pwmPin, int dirPin, int encPin);
+    ~Motor();
     bool init(int position);
     void count();
     int setEncCount(int count);

@@ -23,9 +23,7 @@ private:
     int m_controlPeriodInMs;
     double m_vControl, m_wControl;
     int m_EncL, m_EncR;
-    int m_dEncL, m_dEncR;
-    int m_oldEncL, m_oldEncR;
-    PID m_pidR, m_pidL;
+    PID m_pidV, m_pidW;
 
 
 

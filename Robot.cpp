@@ -20,24 +20,20 @@ Robot::Robot(int pwmPinRight, int dirPinRight, int encPinRight,
           int pwmPinLeft, int dirPinLeft, int encPinLeft) :
           m_leftMotor(pwmPinLeft, dirPinLeft, encPinLeft),
           m_rightMotor(pwmPinRight, dirPinRight, encPinRight),
-          m_pidL(10, 5, 0),
-          m_pidR(10, 5, 0){
+          m_pidV(200, 50, 0),
+          m_pidW(25, 3, 0){
 
     m_x = 0.0;
     m_y = 0.0;
     m_theta = 0.0;
     m_v = 0.0;
     m_w = 0.0;
-    m_vRef = 200;
+    m_vRef = 0.0;
     m_wRef = 0.0;
 
 
-    m_dEncL = 0;
-    m_dEncR = 0;
 
     robotPointer = this;
-    m_oldEncL = 0;
-    m_oldEncR = 0;
 
 
 }
@@ -82,8 +78,8 @@ void Robot::move(double v, double w){
 }
 
 void Robot::getPose(double &x, double &y){
-    x = (double) m_EncL;
-    y = (double) m_vControl;
+    x = (double) m_w;
+    y = (double) m_wControl;
 }
 
 void Robot::control(){
@@ -91,8 +87,21 @@ void Robot::control(){
     m_EncR = m_rightMotor.getEncCount();
     m_leftMotor.setEncCount(0);
     m_rightMotor.setEncCount(0);
-    m_vControl = m_pidL.computeOutput(m_EncL, m_vRef);
-    m_wControl = m_pidR.computeOutput(m_EncL, m_vRef);
-    m_leftMotor.setSpeed(m_vControl);
-    m_rightMotor.setSpeed(m_wControl);
+    
+    double dx = PI * RADIUS * (m_EncL + m_EncR) / N;
+    double dTheta = 2 * PI * RADIUS * (m_EncR - m_EncL) / (N * LENGTH);
+
+    m_v = dx / (m_controlPeriodInMs / 1000.0);
+    m_w = dTheta / (m_controlPeriodInMs / 1000.0);
+
+    m_x += dx * cos(m_theta);
+    m_y += dx * sin(m_theta);
+    m_theta += dTheta;
+
+    m_vControl = m_pidV.computeOutput(m_v, m_vRef);
+    m_wControl = m_pidW.computeOutput(m_w, m_wRef);
+    m_leftMotor.setSpeed(m_vControl - m_wControl);
+    m_rightMotor.setSpeed(m_vControl + m_wControl);
+
+ 
 }

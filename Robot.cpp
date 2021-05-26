@@ -5,7 +5,7 @@
 
 // #include <TimerOne.h>
 #include "MsTimer2.h"
-
+#include <ros.h>
 
 
 Robot *robotPointer = NULL;
@@ -15,9 +15,9 @@ static void controlWrapper(){
 }
 
 
-
 Robot::Robot(int pwmPinRight, int dirPinRight, int encPinRight,
-          int pwmPinLeft, int dirPinLeft, int encPinLeft) :
+             int pwmPinLeft, int dirPinLeft, int encPinLeft) :
+          m_cmdVelSub("cmd_vel", &Robot::cmdVelCallback, this),
           m_leftMotor(pwmPinLeft, dirPinLeft, encPinLeft),
           m_rightMotor(pwmPinRight, dirPinRight, encPinRight),
           m_pidV(200, 50, 0),
@@ -43,7 +43,7 @@ Robot::~Robot(){
 }
 
 
-int Robot::init(int controlPeriodInMs, int stdbyPin) {
+int Robot::init(int controlPeriodInMs, int stdbyPin, ros::NodeHandle& nh) {
     m_stdbyPin = stdbyPin;
     pinMode(m_stdbyPin, OUTPUT);
 
@@ -52,6 +52,8 @@ int Robot::init(int controlPeriodInMs, int stdbyPin) {
     m_leftMotor.init(LEFT);
     m_rightMotor.init(RIGHT);
     m_controlPeriodInMs = controlPeriodInMs;
+
+    nh.subscribe(m_cmdVelSub);
 
     return 0;
 }
@@ -72,14 +74,17 @@ int Robot::stop(){
     return 0;
 }
 
-void Robot::move(double v, double w){
-    m_vRef = v;
-    m_wRef = w;
-}
+
 
 void Robot::getPose(double &x, double &y){
     x = (double) m_w;
     y = (double) m_wControl;
+}
+
+
+void Robot::cmdVelCallback(const geometry_msgs::Twist &cmdVel){
+    m_vRef = cmdVel.linear.x;
+    m_wRef = cmdVel.angular.z;
 }
 
 void Robot::control(){

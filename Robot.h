@@ -3,7 +3,8 @@
 
 #include "Motor.h"
 #include "PID.h"
-
+#include <ros.h>
+#include <geometry_msgs/Twist.h>
 
 #define LENGTH 0.17 // length between two wheels in meter
 #define RADIUS 0.034 // radius of the wheels in meter 
@@ -25,17 +26,20 @@ private:
     int m_EncL, m_EncR;
     PID m_pidV, m_pidW;
 
+    ros::Subscriber<geometry_msgs::Twist, Robot> m_cmdVelSub;
+
+
 
 
 public:
     Robot(int pwmPinRight, int dirPinRight, int encPinRight,
-          int pwmPinLeft, int dirPinLeft, int encPinLeft);
+        int pwmPinLeft, int dirPinLeft, int encPinLeft);
     ~Robot();
-    int init(int controlPeriodInMs, int stdbyPin);
+    int init(int controlPeriodInMs, int stdbyPin, ros::NodeHandle& nh);
     int run(int speed = 0);
     int stop();
     void printPose();
-    void move(double v, double w);
+    void cmdVelCallback(const geometry_msgs::Twist &cmdVel);
     void getPose(double &x, double &y);
     void control();
 };

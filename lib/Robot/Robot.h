@@ -10,7 +10,6 @@
 #define LENGTH 0.17 // length between two wheels in meter
 #define RADIUS 0.034 // radius of the wheels in meter 
 #define N 780 // encoder resolution
-#define PI 3.14
 #define LINEAR_SCALE 0.96 // sca
 #define ANGULAR_SCALE 1.0
 

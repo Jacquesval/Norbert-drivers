@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "Motor.h"
 
-#include "include/PinChangeInt.h"
+#include "PinChangeInt.h"
 
 // trick to have static callback -> can have 2 motors for the robot
 Motor *instances[2] = {NULL, NULL};
@@ -48,7 +48,7 @@ bool Motor::init(int position = LEFT)
 
         // according to the position of the wheel we use different interrupts
         if (position == LEFT) {
-            attachInterrupt (digitalPinToInterrupt(m_encPin), countLeft, CHANGE);
+            attachInterrupt (m_encPin, countLeft, CHANGE);
         }
         else if (position == RIGHT){
             attachPinChangeInterrupt (m_encPin, countRight, CHANGE);

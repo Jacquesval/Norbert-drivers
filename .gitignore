@@ -4,3 +4,7 @@
 .vscode/launch.json
 .vscode/ipch
 **.vscode
+Norbert-drivers/*
+!Norbert-drivers/DEBIAN
+build-nano328
+lib/ros_lib

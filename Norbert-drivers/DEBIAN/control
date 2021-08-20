@@ -1,0 +1,8 @@
+Package: norbert-driver
+Version: 1.0
+Section: custom
+Priority: optional
+Architecture: all
+Essential: no
+Maintainer: jacques-48@hotmail.fr
+Description: drivers of norbert robot mapper

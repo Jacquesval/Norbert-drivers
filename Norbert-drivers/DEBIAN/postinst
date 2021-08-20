@@ -1,0 +1,14 @@
+#!/bin/bash
+# build ros_package directly on raspberry instead of cross-compiling for arm64 (but it take some time for the orb_slam_package)
+
+# create link from upload_drivers to /usr/bin/upload_drivers
+# make it executable only from root
+UPLOAD_SCRIPT=/etc/norbert-drivers/scripts/upload_drivers
+
+# only root can access the file
+chown root:root ${UPLOAD_SCRIPT}
+
+ln -s ${UPLOAD_SCRIPT} /usr/bin/upload_drivers
+
+
+/bin/bash /usr/bin/upload_drivers

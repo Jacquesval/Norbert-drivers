@@ -1,0 +1,62 @@
+#!/bin/bash
+
+AVRDUDE_CONF="/usr/share/arduino/hardware/tools/avrdude.conf"
+AVRDUDE="/usr/share/arduino/hardware/tools/avrdude"
+HEX_FILE="/etc/norbert-drivers/obj/Norbert-drivers.hex"
+BOARD_NAME="atmega328p"
+
+port=""
+
+
+
+while getopts ":p:" opt; do
+    case ${opt} in
+        p )
+            port=$OPTARG
+            echo "port set to ${port}"
+        ;;
+        /? ) 
+            echo "usage upload [-p Port]"
+        ;;
+        : ) 
+            echo "Invalid option: $OPTARG requires an argument" 1>&2 
+    esac
+done
+shift $((OPTIND -1))
+
+if [ "${port}" = "" ]
+then
+    if [ "$(ls /dev | grep -c 'ttyACM\|ttyUSB')" = "1" ]
+    then
+        port="/dev/$(ls /dev | grep 'ttyACM\|ttyUSB')"
+    else
+        echo "couldn't specify port check the command ls /dev | grep 'ttyACM\|ttyUSB'"
+        exit 0
+    fi
+
+fi
+
+# reset board
+
+resetScript=ard-reset-arduino
+
+echo "reset the board"
+ard-reset-arduino "$port" --verbose
+
+echo "flash board"
+$AVRDUDE -p $BOARD_NAME -C $AVRDUDE_CONF -D -c arduino -b 115200 -P "$port" -U flash:w:$HEX_FILE:i
+
+
+
+
+# verify if size of hex is small enough
+
+# reset the board by calling python script
+
+#upload hex to the board
+
+# avrdude -p [board name] -C [avrdude conf file] -D -c [programmer] -b [baudrate] -P [arduino port] -U [memeType:operation:filename:format of file]
+
+
+
+# avrdude -p atmega328p -C /usr/share/arduino/hardware/tools/avr/../avrdude.conf -D -c arduino -b 57600 -P /dev/ttyACM0 -U flash:w:build-nano328/Norbert-drivers.hex:i

@@ -12,7 +12,8 @@
 ros::NodeHandle nh;
 
 Robot norbert(PWMB_RIGHT, BIN1, ENCODER_RIGHT_A_PIN,
-            PWMA_LEFT, AIN1, ENCODER_LEFT_A_PIN);
+            PWMA_LEFT, AIN1, ENCODER_LEFT_A_PIN,
+            TRIG_PIN, ECHO_PIN);
 
 void setup()
 { 

@@ -1,7 +1,6 @@
 #include "Robot.h"
 #include <Arduino.h>
 #include <math.h>
-#include "PID.h"
 
 // #include <TimerOne.h>
 #include "MsTimer2.h"
@@ -16,13 +15,15 @@ static void controlWrapper(){
 
 
 Robot::Robot(int pwmPinRight, int dirPinRight, int encPinRight,
-             int pwmPinLeft, int dirPinLeft, int encPinLeft) :
+             int pwmPinLeft, int dirPinLeft, int encPinLeft, int usTrigPin, int usEchoPin) :
           m_cmdVelSub("cmd_vel", &Robot::cmdVelCallback, this),
           m_posePub("norbert_state", &m_pose),
           m_leftMotor(pwmPinLeft, dirPinLeft, encPinLeft),
           m_rightMotor(pwmPinRight, dirPinRight, encPinRight),
           m_pidV(200, 50, 0),
-          m_pidW(25, 5, 0){
+          m_pidW(25, 5, 0),
+          m_usSensor(usTrigPin, usEchoPin),
+          m_usPub("usRange", &m_usRange){
 
     m_x = 0.0;
     m_y = 0.0;
@@ -32,11 +33,11 @@ Robot::Robot(int pwmPinRight, int dirPinRight, int encPinRight,
     m_vRef = 0.0;
     m_wRef = 0.0;
 
+    m_controlPeriodCount = 0;
 
+    m_USPeriodInMs = 1000;
 
     robotPointer = this;
-
-
 }
 
 Robot::~Robot(){
@@ -56,6 +57,7 @@ int Robot::init(int controlPeriodInMs, int stdbyPin, ros::NodeHandle& nh) {
 
     nh.subscribe(m_cmdVelSub);
     nh.advertise(m_posePub);
+    nh.advertise(m_usPub);
 
     return 0;
 }
@@ -90,6 +92,7 @@ void Robot::cmdVelCallback(const geometry_msgs::Twist &cmdVel){
 }
 
 void Robot::control(){
+    m_controlPeriodCount++;
     m_EncL = m_leftMotor.getEncCount();
     m_EncR = m_rightMotor.getEncCount();
     m_leftMotor.setEncCount(0);
@@ -116,6 +119,8 @@ void Robot::control(){
 
     m_posePub.publish(&m_pose);
 
+    publishUsDistance();
+
  
 }
 
@@ -125,4 +130,15 @@ void Robot::setSpeed(float speed){
 
 void Robot::setYaw(float yaw){
     m_wRef = yaw;
+}
+
+void Robot::publishUsDistance(){
+    int rangeInCm = m_usSensor.dist();
+    rangeInCm = constrain(rangeInCm, 2, 400);
+    if (m_usRange.data != rangeInCm){
+        m_usRange.data = (float) rangeInCm;
+        if (1){
+            m_usPub.publish(&m_usRange);
+        }
+    }
 }

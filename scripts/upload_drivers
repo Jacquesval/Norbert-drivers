@@ -38,10 +38,10 @@ fi
 
 # reset board
 
-resetScript=ard-reset-arduino
+resetScript=/etc/norbert-drivers/scripts/ard-reset-arduino
 
 echo "reset the board"
-ard-reset-arduino "$port" --verbose
+/usr/bin/python3 $resetScript "$port" --verbose
 
 echo "flash board"
 $AVRDUDE -p $BOARD_NAME -C $AVRDUDE_CONF -D -c arduino -b 115200 -P "$port" -U flash:w:$HEX_FILE:i

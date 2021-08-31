@@ -1,9 +1,6 @@
 [submodule "Arduino-Makefile"]
 	path = Arduino-Makefile
 	url = https://github.com/sudar/Arduino-Makefile.git
-[submodule "lib/Ultrasonic"]
-	path = lib/Ultrasonic
-	url = https://github.com/ErickSimoes/Ultrasonic.git
 [submodule "lib/HCSR04-ultrasonic-sensor-lib"]
 	path = lib/HCSR04-ultrasonic-sensor-lib
 	url = https://github.com/gamegine/HCSR04-ultrasonic-sensor-lib.git

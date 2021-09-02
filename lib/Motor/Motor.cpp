@@ -4,7 +4,7 @@
 #include "PinChangeInt.h"
 
 // trick to have static callback -> can have 2 motors for the robot
-Motor *instances[2] = {NULL, NULL};
+volatile Motor *instances[2] = {NULL, NULL};
 
 static void countLeft(void){
     if (instances[LEFT] != NULL){

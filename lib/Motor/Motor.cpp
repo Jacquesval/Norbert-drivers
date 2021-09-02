@@ -48,7 +48,7 @@ bool Motor::init(int position = LEFT)
 
         // according to the position of the wheel we use different interrupts
         if (position == LEFT) {
-            attachInterrupt (m_encPin, countLeft, CHANGE);
+            attachPinChangeInterrupt (m_encPin, countLeft, CHANGE);
         }
         else if (position == RIGHT){
             attachPinChangeInterrupt (m_encPin, countRight, CHANGE);

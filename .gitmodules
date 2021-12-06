@@ -4,3 +4,6 @@
 [submodule "lib/HCSR04-ultrasonic-sensor-lib"]
 	path = lib/HCSR04-ultrasonic-sensor-lib
 	url = https://github.com/gamegine/HCSR04-ultrasonic-sensor-lib.git
+[submodule "lib/EnableInterrupt"]
+	path = lib/EnableInterrupt
+	url = https://github.com/GreyGnome/EnableInterrupt.git

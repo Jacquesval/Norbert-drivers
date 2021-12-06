@@ -25,6 +25,11 @@ include $(ARDMK_DIR)/Arduino.mk
 
 build: $(TARGET_HEX)
 
+flash:
+	avrdude -c arduino -p m328p -P $(PORT) -b 115200 -U flash:w:$(TARGET_HEX)
+
+term:
+	miniterm $(PORT) 115200 --exit-char 78
 
 prepare_package: verify_size
 	mkdir -p $(DIST)/$(DIST_OBJ_DIR)

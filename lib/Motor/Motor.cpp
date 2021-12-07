@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "Motor.h"
 
-#include "PinChangeInt.h"
+#include "EnableInterrupt.h"
 
 // trick to have static callback -> can have 2 motors for the robot
 volatile Motor *instances[2] = {NULL, NULL};
@@ -48,10 +48,10 @@ bool Motor::init(int position = LEFT)
 
         // according to the position of the wheel we use different interrupts
         if (position == LEFT) {
-            attachPinChangeInterrupt (m_encPin, countLeft, CHANGE);
+            enableInterrupt (m_encPin, countLeft, CHANGE);
         }
         else if (position == RIGHT){
-            attachPinChangeInterrupt (m_encPin, countRight, CHANGE);
+            enableInterrupt (m_encPin, countRight, CHANGE);
         }
         return true;
     }

@@ -133,10 +133,10 @@ void Robot::setYaw(float yaw){
 }
 
 void Robot::publishUsDistance(){
-    int rangeInCm = m_usSensor.dist();
-    rangeInCm = constrain(rangeInCm, 2, 400);
-    if (m_usRange.data != rangeInCm){
-        m_usRange.data = (float) rangeInCm;
+    int obstacleDistance = m_usSensor.dist();
+    obstacleDistance = constrain(obstacleDistance, 2, 400);
+    if (m_usRange.data != obstacleDistance){
+        m_usRange.data = (float) obstacleDistance;
         if (1){
             m_usPub.publish(&m_usRange);
         }
